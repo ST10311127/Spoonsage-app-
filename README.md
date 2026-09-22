@@ -8,12 +8,12 @@ recipe discovery, meal planning, a grocery list, progress tracking, and an
 AI-powered nutrition coach, backed by Firebase for authentication and cloud
 data sync.
 
-[![Android CI](https://github.com/<YOUR_GITHUB_USERNAME>/SpoonSage/actions/workflows/build.yml/badge.svg)](https://github.com/<YOUR_GITHUB_USERNAME>/SpoonSage/actions/workflows/build.yml)
+[![Android CI](https://github.com/<ST10311127>/SpoonSage/actions/workflows/build.yml/badge.svg)](https://github.com/<ST10311127>/SpoonSage/actions/workflows/build.yml)
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?logo=kotlin&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)
 ![License](https://img.shields.io/badge/license-Educational%20Use-lightgrey)
 
-> Replace `<YOUR_GITHUB_USERNAME>` above (and in the clone command below)
+> Replace `<ST10311127>` above (and in the clone command below)
 > with your actual GitHub username/org once this is pushed.
 
 ---
