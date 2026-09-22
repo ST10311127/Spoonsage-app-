@@ -257,7 +257,7 @@ Firestore.
 <!-- Max 500 words. Replace with your own account of how AI tools were
      used and cited — e.g. Claude for scaffolding the Firebase migration,
      debugging Gradle errors, drafting this README/CI workflow, etc. -->
-[AI USAGE DISCLOSURE — TO BE FINALISED]
+[AI USAGE DISCLOSURE — FILE UPLOADED]
 
 ## Author
 
