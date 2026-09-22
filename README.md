@@ -13,8 +13,8 @@ data sync.
 ![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)
 ![License](https://img.shields.io/badge/license-Educational%20Use-lightgrey)
 
-> Replace `<ST10311127>` above (and in the clone command below)
-> with your actual GitHub username/org once this is pushed.
+> `<ST10311127>` 
+
 
 ---
 
@@ -245,7 +245,7 @@ Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
 
 ## Demonstration Video
 
-📺 [VIDEO LINK HERE]
+📺 (https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN)
 
 The video (with voice-over) shows: registering and logging in with an
 encrypted password, changing settings, the app calling the Spoonacular REST
