@@ -1,20 +1,25 @@
 # 🥄 SpoonSage
 
+<p align="center">
+  <img src="docs/playstore_icon_512.png" width="140" alt="SpoonSage logo" />
+</p>
+
 **Plan meals, shop smarter, and get coached — all in one Android app.**
 
-SpoonSage is a Kotlin/Jetpack Compose Android app prototype built for the IIE
-*App Prototype Development* assessment (Learning Units 1 & 2). It combines
-recipe discovery, meal planning, a grocery list, progress tracking, and an
+SpoonSage is a Kotlin Android app built for the IIE *OPSC6312* Portfolio of
+Evidence (Part 3 — Final, Learning Units 1 to 4). It combines recipe
+discovery, meal planning, a grocery list, progress tracking, and an
 AI-powered nutrition coach, backed by Firebase for authentication and cloud
-data sync.
+data sync. For the final PoE the app was **rebuilt from Jetpack Compose to
+XML layouts with Fragments**, based on my lecturer's feedback.
 
-[![Android CI](https://github.com/<ST10311127>/SpoonSage/actions/workflows/build.yml/badge.svg)](https://github.com/<ST10311127>/SpoonSage/actions/workflows/build.yml)
-![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?logo=kotlin&logoColor=white)
-![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)
+[![Android CI](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml/badge.svg)](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.1-7F52FF?logo=kotlin&logoColor=white)
+![Min SDK](https://img.shields.io/badge/minSdk-26-brightgreen)
+![UI](https://img.shields.io/badge/UI-XML%20%2B%20Fragments-blue)
 ![License](https://img.shields.io/badge/license-Educational%20Use-lightgrey)
 
-> `<ST10311127>` 
-
+> **Student:** Mulamuleli Given Mutshotsho · **ST10311127** · Final release tag: `final-poe`
 
 ---
 
@@ -26,11 +31,15 @@ data sync.
 - [Screenshots](#screenshots)
 - [Tech Stack & Architecture](#tech-stack--architecture)
 - [REST API & Hosted Services](#rest-api--hosted-services)
+- [Offline Mode & Sync](#offline-mode--sync)
 - [Setup & Installation](#setup--installation)
 - [GitHub Actions (CI)](#github-actions-ci)
 - [Testing](#testing)
+- [Release Notes](#release-notes)
+- [Publishing (Google Play Store)](#publishing-google-play-store)
 - [Demonstration Video](#demonstration-video)
 - [AI Usage Disclosure](#ai-usage-disclosure)
+- [References](#references)
 - [Author](#author)
 
 ---
@@ -46,196 +55,219 @@ plus three different apps.
 
 SpoonSage solves this by combining:
 - real recipe data (via the Spoonacular API),
-- a lightweight meal plan and auto-generated grocery list, and
+- a weekly meal plan and an auto-generated grocery list,
+- daily tracking of calories, protein and water with streaks, and
 - an AI Coach that gives short, practical nutrition advice on request.
+
+It is built for South African users: the whole app is available in
+**English, isiZulu and Afrikaans**, and it keeps working **without internet**.
 
 ## Design Considerations
 
-- **Architecture:** MVVM (Model-View-ViewModel), the standard recommended
-  pattern for Jetpack Compose apps. Compose screens observe `StateFlow`/
-  Compose state exposed by ViewModels; ViewModels talk to a single shared
-  `RecipeRepository`, never to the database or network directly.
-- **Offline-first:** Room is the local source of truth for recipes, the meal
-  plan, grocery list, progress logs, and reminders, so the app stays usable
-  without a connection. `DataStore` (`UserPreferences`) caches small profile
-  values (personal info, goals, diet) locally and mirrors them to Firestore.
-- **Manual dependency injection:** a single `AppViewModelFactory` and one
-  `SpoonSageApp.repository` instance are shared across screens, instead of
-  Hilt/Dagger — kept simple and easy to trace for a prototype of this size.
-- **Why Firebase:** Authentication + Firestore were chosen over a
-  self-built Node/Express backend so the assessment's "connect to a hosted
-  REST/backend service with a database" requirement is met with a
-  production-grade, genuinely hosted service, without needing to also run
-  and pay to keep a custom server online for marking.
-- **Why Gemini via Firebase AI Logic:** the AI Coach originally called the
-  Anthropic API directly; it was switched to Gemini through **Firebase AI
-  Logic** (`GenerativeBackend.googleAI()`) because that backend has a real
-  free tier with no Cloud billing account required, and it reuses the same
-  Firebase project as Auth/Firestore rather than needing a separate paid key.
+- **XML + Fragments (rebuilt for Part 3):** every screen is a `Fragment` with
+  its own XML layout, connected through **ViewBinding** (e.g.
+  `fragment_login.xml` → `FragmentLoginBinding`). This replaces the Part 2
+  Jetpack Compose UI, as requested in my lecturer's feedback. Two activities
+  host the fragments: `AuthActivity` (welcome, login, register, profile setup)
+  and `MainActivity` (bottom navigation with Home, Recipes, Meal Plan,
+  AI Coach and Profile).
+- **Single repository:** all screens get their data from one
+  `SpoonSageRepository`, never from the database or network directly.
+  Screens observe Room `LiveData`, so they update automatically.
+- **Offline-first:** RoomDB is the local source of truth for recipes, the meal
+  plan, grocery list, progress logs, reminders and AI chat history, so the app
+  stays usable without a connection. Changes are synced to Firestore when the
+  phone reconnects.
+- **Why Firebase:** Authentication + Firestore + Cloud Messaging give a
+  production-grade, genuinely hosted backend without running and paying for a
+  custom server for marking.
+- **Why Gemini via Firebase AI Logic:** it has a free tier with no billing
+  account and reuses the same Firebase project as Auth and Firestore.
+- **Security:** passwords are handled by Firebase Auth; the offline login copy
+  is a salted PBKDF2 hash. The Spoonacular key lives in `local.properties`
+  (not committed) and is masked in logs. Firestore rules only allow users to
+  access their own data.
+- **UI/UX:** colours taken from the logo, Material 3 components, full dark
+  mode, empty states, loading indicators, an orange "You're offline" banner,
+  and input validation on every form so invalid input never crashes the app.
 
 ## Features
 
 | Feature | Status | Notes |
 |---|---|---|
-| Recipe search (by ingredient & by query/diet) | ✅ Implemented | Spoonacular REST API |
-| Recipe detail (ingredients, steps, nutrition) | ✅ Implemented | |
-| Meal planning (assign recipes to days) | ✅ Implemented | Room-backed |
-| Auto-generated grocery list | ✅ Implemented | Room-backed |
-| Progress tracking (calories/protein/water + streak) | ✅ Implemented | Room-backed |
-| Reminders (meal/water/weigh-in) | ✅ Implemented | Room-backed |
+| Recipe search (by ingredient & by name/diet) | ✅ Implemented | Spoonacular REST API via Retrofit |
+| Recipe detail, favourites & cooking mode | ✅ Implemented | Step-by-step, keeps screen on |
+| Meal planning (assign recipes to days & meals) | ✅ Implemented | Room + Firestore |
+| Auto-generated grocery list | ✅ Implemented | Room + Firestore |
+| Progress tracking (calories/protein/water + streak) | ✅ Implemented | 7-day chart, 3/7/14-day badges |
 | AI Coach chat with dish suggestions | ✅ Implemented | Gemini via Firebase AI Logic |
-| Sign up / log in with encrypted password | ✅ Implemented | Firebase Authentication (password never touches app code) |
-| Continue as guest | ✅ Implemented | Firebase anonymous auth |
-| Settings / profile editing (personal info, goals, diet) | ✅ Implemented | Syncs to Firestore |
-| Cloud sync of profile across devices | ✅ Implemented | Cloud Firestore |
-| Push notifications for reminders | ⏳ Deferred to final PoE | Local reminders exist; OS-level notification triggers not yet wired up |
-| Social sharing of meal plans | ⏳ Deferred to final PoE | |
-| Multi-language support | ⏳ Deferred to final PoE | |
-
-> Adjust the "Deferred" rows to match whatever your own design document
-> actually lists — these are placeholders for typical PoE-stage features.
+| Sign up / log in with encrypted password | ✅ Implemented | Firebase Auth + PBKDF2 hash for offline login |
+| **Single sign-on (Google)** | ✅ **New in Part 3** | Credential Manager + Firebase Auth |
+| Continue as guest | ✅ Implemented | Data stays on the phone |
+| Settings / profile editing | ✅ Implemented | Language, theme, notifications, sync, personal info, diet, goals |
+| **Offline mode with sync** | ✅ **New in Part 3** | RoomDB → Firestore on reconnect |
+| **Real-time push notifications** | ✅ **New in Part 3** | Firebase Cloud Messaging |
+| **Daily reminders** | ✅ **New in Part 3** | Water / meal / log progress (AlarmManager) |
+| **Multi-language (isiZulu & Afrikaans)** | ✅ **New in Part 3** | Per-app language setting |
+| **Dark mode** | ✅ **New in Part 3** | Light / dark / follow phone |
 
 ## Screenshots
 
-<!-- Replace these with real screenshots before submitting -->
-| Home | AI Coach | Meal Plan |
-|---|---|---|
-| ![Home screen](docs/screenshots/home.png) | ![AI Coach screen](docs/screenshots/ai-coach.png) | ![Meal plan screen](docs/screenshots/meal-plan.png) |
+<!-- Add real screenshots from your phone to docs/screenshots/ -->
+| Welcome | Dashboard | Recipe | Meal Plan | AI Coach | Settings (isiZulu) |
+|---|---|---|---|---|---|
+| ![Welcome](docs/screenshots/welcome.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Recipe](docs/screenshots/recipe.png) | ![Meal plan](docs/screenshots/mealplan.png) | ![AI Coach](docs/screenshots/coach.png) | ![Settings](docs/screenshots/settings_zu.png) |
 
 ## Tech Stack & Architecture
 
-**Language & UI:** Kotlin, Jetpack Compose, Material 3, Navigation Compose
-**Local storage:** Room (offline cache), DataStore (small preference values)
+**Language & UI:** Kotlin, XML layouts, Fragments, ViewBinding, Material 3
+**Local storage:** RoomDB (offline database), SharedPreferences (settings)
 **Networking:** Retrofit + OkHttp + Gson (Spoonacular)
-**Cloud services:** Firebase Authentication, Cloud Firestore, Gemini via
-Firebase AI Logic
-**Async:** Kotlin Coroutines & Flow
-**Images:** Coil
-**Testing:** JUnit4, MockK, kotlinx-coroutines-test, Google Truth
+**Cloud services:** Firebase Authentication, Cloud Firestore, Firebase Cloud
+Messaging, Gemini via Firebase AI Logic
+**Sign-in:** Android Credential Manager (Google SSO)
+**Async:** Kotlin Coroutines & LiveData
+**Images:** Glide
+**Testing:** JUnit4
 **CI/CD:** GitHub Actions
 
 ```mermaid
 flowchart TB
-    subgraph Device["Android App (Kotlin + Jetpack Compose)"]
-        UI["Compose Screens\n(Home, Recipes, Meal Plan,\nGrocery, Progress, AI Coach, Profile)"]
-        VM["ViewModels\n(MVVM)"]
-        Repo["RecipeRepository\n(single source of truth)"]
-        Room[("Room DB\nrecipes / meal plan /\ngrocery / progress / reminders")]
-        DS[("DataStore\nUserPreferences cache")]
-        UI --> VM --> Repo
+    subgraph Device["Android App (Kotlin + XML + Fragments)"]
+        UI["Fragments + XML layouts\n(Dashboard, Recipes, Meal Plan,\nGrocery, Progress, AI Coach, Profile, Settings)"]
+        Repo["SpoonSageRepository\n(single source of truth)"]
+        Room[("RoomDB\nrecipes / meal plan / grocery /\nprogress / reminders / chat / local users")]
+        Sync["SyncManager +\nNetworkMonitor"]
+        UI -->|ViewBinding + LiveData| Repo
         Repo --> Room
-        Repo --> DS
+        Repo --> Sync
     end
 
-    Repo -->|Retrofit| Spoonacular[("Spoonacular REST API\n(hosted, 3rd-party)")]
-    Repo -->|Firebase AI Logic| Gemini[("Gemini\ngemini-3.6-flash")]
-    VM -->|Firebase SDK| Auth[("Firebase Authentication\n(hosted)")]
-    Repo -->|Firebase SDK| Firestore[("Cloud Firestore\nusers/{uid}")]
+    Repo -->|Retrofit| Spoonacular[("Spoonacular REST API")]
+    Repo -->|Firebase AI Logic| Gemini[("Gemini")]
+    UI -->|Firebase Auth + Google SSO| Auth[("Firebase Authentication")]
+    Sync -->|Firebase SDK| Firestore[("Cloud Firestore\nusers/{uid}")]
+    FCM[("Firebase Cloud Messaging")] -->|push| UI
 ```
 
 ## REST API & Hosted Services
 
-SpoonSage uses **two** hosted, internet-based services, both connected to
-real databases, satisfying the "connect to a REST API/backend with a
-database" requirement:
+SpoonSage uses hosted, internet-based services connected to real databases:
 
 ### 1. Spoonacular (third-party REST API → recipe database)
 
-Base URL: `https://api.spoonacular.com/`
+Base URL: `https://api.spoonacular.com/` — called with **Retrofit**
+(`data/remote/SpoonacularApi.kt`). An OkHttp interceptor adds the API key to
+every request and masks it in Logcat.
 
 | Endpoint | Method | Used for |
 |---|---|---|
+| `/recipes/complexSearch` | GET | Search by name, filtered by diet & disliked ingredients |
 | `/recipes/findByIngredients` | GET | Search recipes by ingredients the user already has |
-| `/recipes/complexSearch` | GET | Search by name/cuisine, filtered by diet & intolerances |
 | `/recipes/{id}/information` | GET | Full recipe detail: ingredients, steps, nutrition |
 
 Example request (ingredient search):
 ```
 GET https://api.spoonacular.com/recipes/findByIngredients
     ?ingredients=chicken,rice,broccoli
-    &number=15
+    &number=20
     &apiKey=YOUR_SPOONACULAR_API_KEY
 ```
 
-Example response (trimmed):
-```json
-[
-  { "id": 632660, "title": "Chicken Fried Rice", "image": "https://...jpg" }
-]
-```
+### 2. Firebase (hosted auth, NoSQL database and messaging)
 
-### 2. Firebase (hosted auth + hosted NoSQL database)
+- **Firebase Authentication** — email/password accounts and **Google
+  sign-in**. Firebase hashes the password on its servers.
+- **Cloud Firestore** — hosted NoSQL database:
 
-- **Firebase Authentication** — hosted identity service; handles account
-  creation, password hashing/encryption, and session tokens. The app never
-  stores or hashes passwords itself.
-- **Cloud Firestore** — hosted NoSQL database. User profile, goals, and
-  dietary preferences are stored per-user at `users/{uid}`.
-- **Firebase AI Logic (Gemini)** — hosted model inference for the AI Coach;
-  see `GeminiCoachClient.kt`.
+  | Path | Data |
+  |---|---|
+  | `users/{uid}` | profile, goals, diet, dislikes, daily targets, FCM token |
+  | `users/{uid}/mealPlan/{id}` | meal plan entries |
+  | `users/{uid}/grocery/{id}` | grocery list items |
+  | `users/{uid}/progress/{date}` | daily calories, protein, water, streak |
 
-Full one-time console setup for all three is documented in
-[`SETUP_FIREBASE.md`](SETUP_FIREBASE.md).
+- **Firebase Cloud Messaging** — real-time push notifications (topic
+  `spoonsage_tips` + each user's token).
+- **Firebase AI Logic (Gemini)** — hosted model inference for the AI Coach.
 
-> For the demonstration video: show the Firebase console's **Authentication**
-> tab (registered users), **Firestore** tab (a `users/{uid}` document with
-> synced profile data), and a Spoonacular API response (e.g. via Logcat or
-> the app's recipe search screen) to satisfy the "show what data is stored
-> in the hosted auth service, API, and database" requirement.
+> For the demonstration video: the Firebase console's **Authentication** tab
+> (registered email + Google users), the **Firestore** tab (`users/{uid}` and
+> its sub-collections), and Spoonacular API calls in **Logcat** (filter
+> `RetrofitClient`) are shown.
+
+## Offline Mode & Sync
+
+1. Every change (meal plan, grocery list, progress log) is saved to **RoomDB
+   first**, marked `synced = false`.
+2. Deletes made offline are marked `pendingDelete = true` instead of being
+   removed straight away.
+3. `NetworkMonitor` watches the connection and shows an orange banner while
+   offline.
+4. When the phone reconnects, `SyncManager` uploads the waiting changes to
+   Firestore, marks them synced, and shows a **"Back online – X changes
+   synced"** notification.
+5. Settings shows the online status, the number of changes waiting and the
+   last sync time, with a **Sync now** button.
+6. **Offline login:** after one online login, a salted PBKDF2 hash of the
+   password is kept in RoomDB so the user can log in without internet.
 
 ## Setup & Installation
 
 1. **Clone the repo:**
    ```bash
-   git clone https://github.com/<YOUR_GITHUB_USERNAME>/SpoonSage.git
-   cd SpoonSage
+   git clone https://github.com/ST10311127/Spoonsage-app-.git
    ```
 2. **Get a free Spoonacular API key:** https://spoonacular.com/food-api →
-   paste it into `app/build.gradle.kts`, replacing
-   `YOUR_SPOONACULAR_API_KEY_HERE`.
-3. **Set up Firebase** (Auth, Firestore, AI Logic) and drop your own
-   `app/google-services.json` into the `app/` folder — full walkthrough in
-   [`SETUP_FIREBASE.md`](SETUP_FIREBASE.md).
-4. **Open in Android Studio** (Hedgehog or newer), let Gradle sync, then
-   **Run ▶** on an emulator or device (minSdk 24 / Android 7.0+).
+   add it to `local.properties` (this file is not committed):
+   ```
+   SPOONACULAR_API_KEY=your_key_here
+   ```
+3. **Set up Firebase** and put `google-services.json` in the `app/` folder:
+   - Authentication → enable **Email/Password** and **Google**
+   - Project settings → add your debug **SHA-1** (needed for Google sign-in)
+   - Create a **Firestore** database and paste in `firestore.rules`
+   - Enable **AI Logic** (Gemini Developer API)
+4. **Open in Android Studio** (Ladybug or newer), set **Gradle JDK** to
+   **jbr-21**, let Gradle sync, then **Run ▶** on a physical phone
+   (minSdk 26 / Android 8.0+).
+
+**Send a test push notification:** Firebase console → Messaging → New
+campaign → Notification → target the topic `spoonsage_tips`.
 
 ## GitHub Actions (CI)
 
 [`.github/workflows/build.yml`](.github/workflows/build.yml) runs
-automatically on every push and pull request to `main`:
+automatically on every push and pull request:
 
 1. Checks out the code.
-2. Writes `app/google-services.json` from a repository secret
-   (`GOOGLE_SERVICES_JSON`, base64-encoded) — this keeps the real file out
-   of the repo (see `.gitignore`) while still letting CI build the app.
+2. Uses `app/google-services.json` (or writes it from the
+   `GOOGLE_SERVICES_JSON` secret if provided).
 3. Sets up JDK 17 and caches Gradle dependencies for faster runs.
 4. Runs `./gradlew testDebugUnitTest` — all unit tests must pass.
 5. Runs `./gradlew assembleDebug` — the app must compile.
 6. Uploads the unit test report and the built debug APK as workflow
-   artifacts, and fails the run with the full stack trace in the logs if
-   either step fails.
+   artifacts.
 
 **Why:** this proves the app builds and its tests pass on a clean machine,
-not just "on my computer" — catching missing files, dependency issues, or
-untested regressions before they reach a reviewer.
+not just "on my computer".
 
-**One-time setup required:** add a repository secret named
-`GOOGLE_SERVICES_JSON` containing the base64-encoded contents of your
-`google-services.json` (Settings → Secrets and variables → Actions → New
-repository secret). Instructions are also in the workflow file's comments.
+**Repository secret:** add `SPOONACULAR_API_KEY` (Settings → Secrets and
+variables → Actions → New repository secret) so the CI-built APK can load
+recipes.
 
 ## Testing
 
 Unit tests live under `app/src/test/java/com/spoonsage/app/` and run on the
-plain JVM (no emulator needed), using JUnit4, MockK (for mocking Firebase),
-and Google Truth (for readable assertions):
+plain JVM (no emulator needed) using JUnit4:
 
 | Test class | Covers |
 |---|---|
-| `CoachReplyParserTest` | Parsing Gemini's raw AI Coach reply into chat text + an optional dish suggestion |
-| `StreakCalculatorTest` | Daily-logging streak rules (same day / next day / gap) |
-| `AuthValidatorTest` | Sign up / login input validation rules |
-| `AuthViewModelTest` | AuthViewModel rejects invalid input *before* ever calling Firebase |
+| `PasswordHasherTest` | Correct password verifies, wrong one fails, hash never contains the password, salts differ |
+| `ValidatorsTest` | Invalid emails, short passwords, non-numbers and out-of-range values are rejected |
+| `TargetCalculatorTest` | Calorie / protein / water targets (Mifflin-St Jeor + goal) |
+| `StreakCalculatorTest` | Daily-logging streak rules (same day / next day / gap) and badges |
+| `CoachReplyParserTest` | Parsing Gemini's reply into chat text + an optional dish suggestion; recipe helpers |
 
 **Run them:**
 ```bash
@@ -243,23 +275,97 @@ and Google Truth (for readable assertions):
 ```
 Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
 
+## Release Notes
+
+### v3.0.0 — Final PoE (Part 3)
+
+**Rebuild**
+- Whole UI rewritten from **Jetpack Compose to XML layouts + Fragments +
+  ViewBinding** (lecturer feedback).
+- **DataStore → SharedPreferences** for settings; profile also stored in
+  Firestore.
+- Spoonacular key moved from `build.gradle.kts` to `local.properties`.
+- Coil replaced by Glide for images; Room now uses KSP.
+
+**New innovative features in this version**
+- 🔐 **Google Single Sign-On** (Credential Manager + Firebase Auth).
+- 📴 **Offline mode with sync** — meal plan, grocery list and progress work
+  with no internet and sync to Firestore on reconnect, with a notification and
+  sync status in Settings.
+- 🔑 **Offline login** with an encrypted (salted PBKDF2) password hash.
+- 🔔 **Real-time push notifications** with Firebase Cloud Messaging.
+- ⏰ **Daily reminders** (water / meal / log progress) that survive a restart.
+- 🌍 **Multi-language** — English, **isiZulu** and **Afrikaans**.
+- 🌙 **Dark mode** and theme setting.
+- 📊 Progress screen with a **7-day calorie chart**, weekly averages and
+  **3/7/14-day streak badges**.
+- ✅ Input validation on every form — no crashes on bad input.
+- 🧪 Unit tests + GitHub Actions CI.
+
+### v2.0.0 — Part 2 prototype (September 2026)
+- Built in **Jetpack Compose** with MVVM (ViewModels + StateFlow), Room,
+  DataStore and Retrofit.
+- Recipe search (Spoonacular), recipe detail and cooking mode, meal plan,
+  grocery list, progress logging with streaks, reminders.
+- AI Coach using Gemini via Firebase AI Logic (replaced the paid Anthropic API).
+- Firebase Authentication (email/password + anonymous guest) and Firestore
+  profile sync.
+- GitHub Actions workflow running unit tests and building the debug APK.
+
+### v1.0.0 — Part 1
+- Research, design and planning of SpoonSage's features.
+
+## Publishing (Google Play Store)
+
+1. **Signed release build:** *Build → Generate Signed App Bundle / APK* →
+   create `spoonsage-release.jks` (kept private, never committed) → **release**.
+2. Release builds use **R8 minification + resource shrinking**
+   (`proguard-rules.pro`).
+3. Store assets: 512×512 icon (`docs/playstore_icon_512.png`), phone
+   screenshots and a 1024×500 feature graphic.
+4. Upload the `.aab` in **Google Play Console → Testing → Internal testing**,
+   complete the content rating and Data safety form.
+
+<!-- Add screenshots: signed APK/AAB output and the app in Google Play Console -->
+| Signed APK | Google Play Console |
+|---|---|
+| ![Signed APK](docs/screenshots/signed_apk.png) | ![Play Console](docs/screenshots/play_console.png) |
+
 ## Demonstration Video
 
-📺 (https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN)
+📺 **Final PoE (Part 3):** _paste your YouTube (unlisted) link here_
 
-The video (with voice-over) shows: registering and logging in with an
-encrypted password, changing settings, the app calling the Spoonacular REST
-API, the AI Coach, and the data stored in Firebase Authentication and
-Firestore.
+📺 Part 2 prototype: https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN
+
+The final video (with voice-over) shows: registering and logging in with an
+encrypted password, Google sign-in, input validation, the Spoonacular REST
+API, meal plan and grocery list, offline mode with sync, real-time push
+notifications, isiZulu and Afrikaans, settings, the AI Coach, progress, and
+the data stored in Firebase Authentication and Firestore.
 
 ## AI Usage Disclosure
 
-<!-- Max 500 words. Replace with your own account of how AI tools were
-     used and cited — e.g. Claude for scaffolding the Firebase migration,
-     debugging Gradle errors, drafting this README/CI workflow, etc. -->
-[AI USAGE DISCLOSURE — FILE UPLOADED]
+See **[AI_USAGE.md](AI_USAGE.md)** (maximum 500 words) for how AI tools were
+used and cited in Part 2 and Part 3.
+
+## References
+
+- Android Developers (2025) *Fragments*. https://developer.android.com/guide/fragments
+- Android Developers (2025) *View binding*. https://developer.android.com/topic/libraries/view-binding
+- Android Developers (2025) *Save data in a local database using Room*. https://developer.android.com/training/data-storage/room
+- Android Developers (2025) *Per-app language preferences*. https://developer.android.com/guide/topics/resources/app-languages
+- Android Developers (2025) *Sign in with Google (Credential Manager)*. https://developer.android.com/identity/sign-in/credential-manager-siwg
+- Firebase (2025) *Firebase Authentication*. https://firebase.google.com/docs/auth
+- Firebase (2025) *Cloud Firestore*. https://firebase.google.com/docs/firestore
+- Firebase (2025) *Firebase Cloud Messaging*. https://firebase.google.com/docs/cloud-messaging [Accessed 03 November 2025]
+- Firebase (2025) *Firebase AI Logic*. https://firebase.google.com/docs/ai-logic
+- Square (2025) *Retrofit*. https://square.github.io/retrofit/
+- Spoonacular (2025) *Food API documentation*. https://spoonacular.com/food-api/docs
+- IMAD5112 (2025) *GitHub Actions build.yml*. https://github.com/IMAD5112/Github-actions/blob/main/.github/workflows/build.yml [Accessed 03 November 2025]
+- OWASP (2025) *Password Storage Cheat Sheet*. https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+- Mifflin, M.D. et al. (1990) 'A new predictive equation for resting energy expenditure in healthy individuals', *American Journal of Clinical Nutrition*, 51(2), pp. 241–247.
 
 ## Author
 
-**Mulamuleli Given Mutshotsho** ("Given") — IIE Faculty of ICT
-*App Prototype Development — Learning Units 1 & 2*
+**Mulamuleli Given Mutshotsho** ("Given") — ST10311127 — IIE Faculty of ICT
+*OPSC6312 — Final Portfolio of Evidence (Part 3)*

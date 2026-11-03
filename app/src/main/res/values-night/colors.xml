@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_primary">#E9EFEA</color>
+    <color name="text_secondary">#A9B8AE</color>
+    <color name="screen_bg">#101512</color>
+    <color name="card_bg">#1A221D</color>
+    <color name="sage_light">#22331F</color>
+    <color name="chat_coach">#22331F</color>
+    <color name="chat_user">#2E6B3A</color>
+</resources>

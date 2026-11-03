@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="gap">12dp</dimen>
+    <dimen name="gap_small">6dp</dimen>
+    <dimen name="recipe_image_height">160dp</dimen>
+</resources>

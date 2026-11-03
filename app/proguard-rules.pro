@@ -1,1 +1,8 @@
-# Add project specific ProGuard rules here.
+-keep class com.spoonsage.app.data.remote.** { *; }
+-keep class com.spoonsage.app.data.local.** { *; }
+-keepattributes Signature, *Annotation*, InnerClasses, EnclosingMethod
+-dontwarn retrofit2.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule { <init>(...); }

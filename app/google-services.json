@@ -12,7 +12,12 @@
           "package_name": "com.spoonsage.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "674986295935-2ehht7vbq9jm4lg36eu3mdhbh894phve.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAMwRPgCuH6rBDy9uw6nauO7a9CI9-Y3pc"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "674986295935-2ehht7vbq9jm4lg36eu3mdhbh894phve.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
