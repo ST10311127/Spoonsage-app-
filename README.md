@@ -1,30 +1,66 @@
+ <div align="center">
+
+<img src="pictures/logo.png" width="160" alt="SpoonSage logo" />
+
 # 🥄 SpoonSage
 
-<p align="center">
-  <img src="docs/playstore_icon_512.png" width="140" alt="SpoonSage logo" />
-</p>
+### 🌿 *Smart meals, better you.*
 
-**Plan meals, shop smarter, and get coached — all in one Android app.**
+**Plan meals, shop smarter, and get coached, all in one Android app.**
+
+[![Android CI](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml/badge.svg)](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml)
+![Platform](https://img.shields.io/badge/Platform-Android-0B3D2E?style=for-the-badge&logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.1-5BA02E?style=for-the-badge&logo=kotlin&logoColor=white)
+![UI](https://img.shields.io/badge/UI-XML%20%2B%20Fragments-0B3D2E?style=for-the-badge)
+![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore%20%7C%20FCM-5BA02E?style=for-the-badge&logo=firebase&logoColor=white)
+![Min SDK](https://img.shields.io/badge/minSdk-26-0B3D2E?style=for-the-badge)
+
+<img src="pictures/welcome.png" width="200"/> &nbsp; <img src="pictures/dashboard.png" width="200"/> &nbsp; <img src="pictures/recipe.png" width="200"/> &nbsp; <img src="pictures/ai_coach.png" width="200"/>
+
+**OPSC6312 · Final Portfolio of Evidence (Part 3) · IIE Faculty of ICT · 2026**
+Final release tag: `final-poe`
+
+</div>
 
 SpoonSage is a Kotlin Android app built for the IIE *OPSC6312* Portfolio of
-Evidence (Part 3 — Final, Learning Units 1 to 4). It combines recipe
+Evidence (Part 3, Final, Learning Units 1 to 4). It combines recipe
 discovery, meal planning, a grocery list, progress tracking, and an
 AI-powered nutrition coach, backed by Firebase for authentication and cloud
 data sync. For the final PoE the app was **rebuilt from Jetpack Compose to
-XML layouts with Fragments**, based on my lecturer's feedback.
+XML layouts with Fragments**, based on the lecturer's feedback.
 
-[![Android CI](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml/badge.svg)](https://github.com/ST10311127/Spoonsage-app-/actions/workflows/build.yml)
-![Kotlin](https://img.shields.io/badge/Kotlin-2.1-7F52FF?logo=kotlin&logoColor=white)
-![Min SDK](https://img.shields.io/badge/minSdk-26-brightgreen)
-![UI](https://img.shields.io/badge/UI-XML%20%2B%20Fragments-blue)
-![License](https://img.shields.io/badge/license-Educational%20Use-lightgrey)
+---
 
-> **Student:** Mulamuleli Given Mutshotsho · **ST10311127** · Final release tag: `final-poe`
+## 🎥 Demonstration Video
+
+> 🔗 **Final PoE (Part 3), narrated demo (unlisted YouTube):**
+> **[PASTE YOUR YOUTUBE (UNLISTED) LINK HERE](PASTE_YOUTUBE_LINK_HERE)**
+
+Part 2 prototype video: https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN
+
+The final video (with voice-over) shows, in order:
+
+| # | What is demonstrated |
+|---|----------------------|
+| 1 | Welcome screen, Get Started and input validation (empty sign-up fields show error messages) |
+| 2 | Registering with email and password (encrypted) and completing profile setup |
+| 3 | **Google single sign-on:** log out, then Continue with Google |
+| 4 | Dashboard, recipe search ("chicken") via the Spoonacular REST API, recipe detail, favourite and Start cooking |
+| 5 | Add to plan, Meal Plan tab and the auto-generated Grocery list |
+| 6 | **Offline mode with sync:** airplane mode, offline banner, add a grocery item and log progress, reconnect and see the "Back online – synced" notification |
+| 7 | **Push notification** sent from the Firebase console, received while the app is in the background |
+| 8 | **Settings:** isiZulu, Afrikaans, English and Dark mode |
+| 9 | AI Coach (Gemini): tap a suggestion and see the reply |
+| 10 | Progress screen, Profile and adding a Reminder |
+| 11 | **Firebase console:** Authentication users and Firestore `users/{uid}` data |
+| 12 | **GitHub Actions** green build |
 
 ---
 
 ## Table of Contents
 
+- [Demonstration Video](#-demonstration-video)
+- [Group Members](#-group-members)
 - [Purpose](#purpose)
 - [Design Considerations](#design-considerations)
 - [Features](#features)
@@ -33,14 +69,25 @@ XML layouts with Fragments**, based on my lecturer's feedback.
 - [REST API & Hosted Services](#rest-api--hosted-services)
 - [Offline Mode & Sync](#offline-mode--sync)
 - [Setup & Installation](#setup--installation)
+- [Utilisation of GitHub](#utilisation-of-github)
 - [GitHub Actions (CI)](#github-actions-ci)
 - [Testing](#testing)
 - [Release Notes](#release-notes)
 - [Publishing (Google Play Store)](#publishing-google-play-store)
-- [Demonstration Video](#demonstration-video)
 - [AI Usage Disclosure](#ai-usage-disclosure)
 - [References](#references)
-- [Author](#author)
+
+---
+
+## 👥 Group Members
+
+| Name | Student Number |
+|------|----------------|
+| Lebogang Ntlatleng | ST10456295 |
+| Mpho Nethomboni | ST10448422 |
+| Mulamuleli Given Mutshotsho | ST10311127 |
+| Portia Mashaba | ST10357369 |
+| Munei Nevhutanda | ST10333563 |
 
 ---
 
@@ -48,8 +95,8 @@ XML layouts with Fragments**, based on my lecturer's feedback.
 
 Meal planning is tedious to do well: juggling what's in the fridge, what fits
 a diet, what's actually nutritious, and turning that into a shopping list.
-**SpoonSage's target audience** is anyone trying to eat more intentionally —
-students and young professionals in particular — who wants a single app that
+**SpoonSage's target audience** is anyone trying to eat more intentionally,
+students and young professionals in particular, who wants a single app that
 plans meals *and* nudges them toward their goals, instead of a spreadsheet
 plus three different apps.
 
@@ -67,7 +114,7 @@ It is built for South African users: the whole app is available in
 - **XML + Fragments (rebuilt for Part 3):** every screen is a `Fragment` with
   its own XML layout, connected through **ViewBinding** (e.g.
   `fragment_login.xml` → `FragmentLoginBinding`). This replaces the Part 2
-  Jetpack Compose UI, as requested in my lecturer's feedback. Two activities
+  Jetpack Compose UI, as requested in the lecturer's feedback. Two activities
   host the fragments: `AuthActivity` (welcome, login, register, profile setup)
   and `MainActivity` (bottom navigation with Home, Recipes, Meal Plan,
   AI Coach and Profile).
@@ -87,9 +134,10 @@ It is built for South African users: the whole app is available in
   is a salted PBKDF2 hash. The Spoonacular key lives in `local.properties`
   (not committed) and is masked in logs. Firestore rules only allow users to
   access their own data.
-- **UI/UX:** colours taken from the logo, Material 3 components, full dark
-  mode, empty states, loading indicators, an orange "You're offline" banner,
-  and input validation on every form so invalid input never crashes the app.
+- **UI/UX:** colours taken from the logo (dark green `#0B3D2E` and leaf green
+  `#5BA02E`), Material 3 components, full dark mode, empty states, loading
+  indicators, an orange "You're offline" banner, and input validation on every
+  form so invalid input never crashes the app.
 
 ## Features
 
@@ -113,10 +161,20 @@ It is built for South African users: the whole app is available in
 
 ## Screenshots
 
-<!-- Add real screenshots from your phone to docs/screenshots/ -->
-| Welcome | Dashboard | Recipe | Meal Plan | AI Coach | Settings (isiZulu) |
-|---|---|---|---|---|---|
-| ![Welcome](docs/screenshots/welcome.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Recipe](docs/screenshots/recipe.png) | ![Meal plan](docs/screenshots/mealplan.png) | ![AI Coach](docs/screenshots/coach.png) | ![Settings](docs/screenshots/settings_zu.png) |
+Screenshots are taken on a physical Android phone and stored in the
+[`pictures/`](pictures) folder.
+
+| Screen | Preview | Description |
+|--------|---------|-------------|
+| **Welcome** | <img src="pictures/welcome.png" width="220"/> | Entry point with Get Started, Log in, Continue with Google and Continue as guest. |
+| **Log in** | <img src="pictures/login.png" width="220"/> | Email and password login with show/hide password, Google single sign-on and a sign-up link. |
+| **Tell us about yourself** | <img src="pictures/about_yourself.png" width="220"/> | Profile setup collecting name, age, gender, height, weight, activity level and goal. |
+| **Home dashboard** | <img src="pictures/dashboard.png" width="220"/> | Daily summary of calories, protein, water and streak, with quick actions and today's meals. |
+| **Recipe** | <img src="pictures/recipe.png" width="220"/> | Recipe detail with ingredients, steps and nutrition (Spoonacular). |
+| **Meal plan** | <img src="pictures/meal_plan.png" width="220"/> | Weekly plan by day with a shortcut to the auto-generated grocery list. |
+| **AI Coach** | <img src="pictures/ai_coach.png" width="220"/> | Gemini-powered nutrition chat with tappable suggestions. |
+| **Profile** | <img src="pictures/profile.png" width="220"/> | Personal and health info, dietary preferences, goals, reminders, progress and settings. |
+| **Language** | <img src="pictures/language.png" width="220"/> | Language settings: English, isiZulu and Afrikaans. |
 
 ## Tech Stack & Architecture
 
@@ -156,7 +214,7 @@ SpoonSage uses hosted, internet-based services connected to real databases:
 
 ### 1. Spoonacular (third-party REST API → recipe database)
 
-Base URL: `https://api.spoonacular.com/` — called with **Retrofit**
+Base URL: `https://api.spoonacular.com/`, called with **Retrofit**
 (`data/remote/SpoonacularApi.kt`). An OkHttp interceptor adds the API key to
 every request and masks it in Logcat.
 
@@ -176,9 +234,9 @@ GET https://api.spoonacular.com/recipes/findByIngredients
 
 ### 2. Firebase (hosted auth, NoSQL database and messaging)
 
-- **Firebase Authentication** — email/password accounts and **Google
+- **Firebase Authentication:** email/password accounts and **Google
   sign-in**. Firebase hashes the password on its servers.
-- **Cloud Firestore** — hosted NoSQL database:
+- **Cloud Firestore:** hosted NoSQL database:
 
   | Path | Data |
   |---|---|
@@ -187,9 +245,9 @@ GET https://api.spoonacular.com/recipes/findByIngredients
   | `users/{uid}/grocery/{id}` | grocery list items |
   | `users/{uid}/progress/{date}` | daily calories, protein, water, streak |
 
-- **Firebase Cloud Messaging** — real-time push notifications (topic
+- **Firebase Cloud Messaging:** real-time push notifications (topic
   `spoonsage_tips` + each user's token).
-- **Firebase AI Logic (Gemini)** — hosted model inference for the AI Coach.
+- **Firebase AI Logic (Gemini):** hosted model inference for the AI Coach.
 
 > For the demonstration video: the Firebase console's **Authentication** tab
 > (registered email + Google users), the **Firestore** tab (`users/{uid}` and
@@ -235,6 +293,21 @@ GET https://api.spoonacular.com/recipes/findByIngredients
 **Send a test push notification:** Firebase console → Messaging → New
 campaign → Notification → target the topic `spoonsage_tips`.
 
+## Utilisation of GitHub
+
+- The repository was initialised with a **README.md** from the start.
+- Code was **committed and pushed regularly** as features were built (auth,
+  meal planning, grocery list, progress, AI Coach, Firebase, offline sync,
+  notifications, languages), giving a meaningful commit history.
+- `.gitignore` keeps secrets and generated files out of the repository
+  (`local.properties`, the signing keystore and build output).
+- Extra setup notes are kept out of the main README where possible.
+- All source code, this README and the CI workflow live in this one public
+  repository. **No zip files** were submitted.
+- The final commit is tagged **`final-poe`**.
+
+**Repository:** https://github.com/ST10311127/Spoonsage-app-
+
 ## GitHub Actions (CI)
 
 [`.github/workflows/build.yml`](.github/workflows/build.yml) runs
@@ -244,8 +317,8 @@ automatically on every push and pull request:
 2. Uses `app/google-services.json` (or writes it from the
    `GOOGLE_SERVICES_JSON` secret if provided).
 3. Sets up JDK 17 and caches Gradle dependencies for faster runs.
-4. Runs `./gradlew testDebugUnitTest` — all unit tests must pass.
-5. Runs `./gradlew assembleDebug` — the app must compile.
+4. Runs `./gradlew testDebugUnitTest`. All unit tests must pass.
+5. Runs `./gradlew assembleDebug`. The app must compile.
 6. Uploads the unit test report and the built debug APK as workflow
    artifacts.
 
@@ -255,6 +328,9 @@ not just "on my computer".
 **Repository secret:** add `SPOONACULAR_API_KEY` (Settings → Secrets and
 variables → Actions → New repository secret) so the CI-built APK can load
 recipes.
+
+<!-- Upload the green build screenshot to pictures/github_actions_green.png -->
+<img src="pictures/github_actions_green.png" alt="GitHub Actions green build" width="700"/>
 
 ## Testing
 
@@ -277,7 +353,7 @@ Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
 
 ## Release Notes
 
-### v3.0.0 — Final PoE (Part 3)
+### v3.0.0, Final PoE (Part 3)
 
 **Rebuild**
 - Whole UI rewritten from **Jetpack Compose to XML layouts + Fragments +
@@ -289,20 +365,20 @@ Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
 
 **New innovative features in this version**
 - 🔐 **Google Single Sign-On** (Credential Manager + Firebase Auth).
-- 📴 **Offline mode with sync** — meal plan, grocery list and progress work
+- 📴 **Offline mode with sync:** meal plan, grocery list and progress work
   with no internet and sync to Firestore on reconnect, with a notification and
   sync status in Settings.
 - 🔑 **Offline login** with an encrypted (salted PBKDF2) password hash.
 - 🔔 **Real-time push notifications** with Firebase Cloud Messaging.
 - ⏰ **Daily reminders** (water / meal / log progress) that survive a restart.
-- 🌍 **Multi-language** — English, **isiZulu** and **Afrikaans**.
+- 🌍 **Multi-language:** English, **isiZulu** and **Afrikaans**.
 - 🌙 **Dark mode** and theme setting.
 - 📊 Progress screen with a **7-day calorie chart**, weekly averages and
   **3/7/14-day streak badges**.
-- ✅ Input validation on every form — no crashes on bad input.
+- ✅ Input validation on every form, so bad input does not crash the app.
 - 🧪 Unit tests + GitHub Actions CI.
 
-### v2.0.0 — Part 2 prototype (September 2026)
+### v2.0.0, Part 2 prototype (September 2026)
 - Built in **Jetpack Compose** with MVVM (ViewModels + StateFlow), Room,
   DataStore and Retrofit.
 - Recipe search (Spoonacular), recipe detail and cooking mode, meal plan,
@@ -312,7 +388,7 @@ Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
   profile sync.
 - GitHub Actions workflow running unit tests and building the debug APK.
 
-### v1.0.0 — Part 1
+### v1.0.0, Part 1
 - Research, design and planning of SpoonSage's features.
 
 ## Publishing (Google Play Store)
@@ -321,27 +397,15 @@ Reports are written to `app/build/reports/tests/testDebugUnitTest/index.html`.
    create `spoonsage-release.jks` (kept private, never committed) → **release**.
 2. Release builds use **R8 minification + resource shrinking**
    (`proguard-rules.pro`).
-3. Store assets: 512×512 icon (`docs/playstore_icon_512.png`), phone
-   screenshots and a 1024×500 feature graphic.
+3. Store assets: 512×512 icon, phone screenshots and a 1024×500 feature
+   graphic.
 4. Upload the `.aab` in **Google Play Console → Testing → Internal testing**,
    complete the content rating and Data safety form.
 
-<!-- Add screenshots: signed APK/AAB output and the app in Google Play Console -->
-| Signed APK | Google Play Console |
+<!-- Add the screenshots to pictures/: signed_apk.png and play_console.png -->
+| Signed APK / AAB | Google Play Console |
 |---|---|
-| ![Signed APK](docs/screenshots/signed_apk.png) | ![Play Console](docs/screenshots/play_console.png) |
-
-## Demonstration Video
-
-📺 **Final PoE (Part 3):** _paste your YouTube (unlisted) link here_
-
-📺 Part 2 prototype: https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN
-
-The final video (with voice-over) shows: registering and logging in with an
-encrypted password, Google sign-in, input validation, the Spoonacular REST
-API, meal plan and grocery list, offline mode with sync, real-time push
-notifications, isiZulu and Afrikaans, settings, the AI Coach, progress, and
-the data stored in Firebase Authentication and Firestore.
+| <img src="pictures/signed_apk.png" width="380"/> | <img src="pictures/play_console.png" width="380"/> |
 
 ## AI Usage Disclosure
 
@@ -365,7 +429,13 @@ used and cited in Part 2 and Part 3.
 - OWASP (2025) *Password Storage Cheat Sheet*. https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
 - Mifflin, M.D. et al. (1990) 'A new predictive equation for resting energy expenditure in healthy individuals', *American Journal of Clinical Nutrition*, 51(2), pp. 241–247.
 
-## Author
+---
 
-**Mulamuleli Given Mutshotsho** ("Given") — ST10311127 — IIE Faculty of ICT
-*OPSC6312 — Final Portfolio of Evidence (Part 3)*
+<div align="center">
+
+**Authors:** Lebogang Ntlatleng · Mpho Nethomboni · Mulamuleli Given Mutshotsho (ST10311127) · Portia Mashaba · Munei Nevhutanda
+*OPSC6312, Final Portfolio of Evidence (Part 3) · IIE Faculty of ICT*
+
+*Smart meals, better you.* 🥄🌿
+
+</div>
