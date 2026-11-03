@@ -1,4 +1,5 @@
- <div align="center">
+
+<div align="center">
 
 <img src="pictures/logo.png" width="160" alt="SpoonSage logo" />
 
