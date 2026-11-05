@@ -35,9 +35,9 @@ XML layouts with Fragments**, based on the lecturer's feedback.
 ## 🎥 Demonstration Video
 
 > 🔗 **Final PoE (Part 3), narrated demo (unlisted YouTube):**
-> **[PASTE YOUR YOUTUBE (UNLISTED) LINK HERE](PASTE_YOUTUBE_LINK_HERE)**
+> **https://youtu.be/Vtkz4ByOIpw?feature=shared**
 
-Part 2 prototype video: https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN
+Part 2 prototype video: **https://youtube.com/shorts/E55vZXmK7Dw?si=UagstXMojyW5aMLN**
 
 The final video (with voice-over) shows, in order:
 
